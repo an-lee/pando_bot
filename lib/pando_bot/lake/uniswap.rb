@@ -3,6 +3,7 @@
 # rubocop:disable Naming/MethodParameterName
 module PandoBot
   module Lake
+    # Uniswap protocal
     class Uniswap
       def initialize; end
 

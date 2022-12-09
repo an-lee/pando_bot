@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 module PandoBot
+  # for Pando Lake/4swap
   module Lake
     attr_reader :client
 
+    # HTTP API
     class API
-      def initialize(endpoint = "https://api.4swap.org")
+      def initialize(endpoint = 'https://api.4swap.org')
         @client = Faraday.new(url: endpoint) do |f|
           f.request :json
           f.request :retry
@@ -16,7 +18,7 @@ module PandoBot
       end
 
       def pre_order(**params)
-        path = "/api/orders/pre"
+        path = '/api/orders/pre'
 
         payload = {
           pay_asset_id: params[:pay_asset_id],
@@ -36,25 +38,25 @@ module PandoBot
       end
 
       def pairs
-        path = "/api/pairs"
+        path = '/api/pairs'
         @client.get(path).body
       end
 
       def actions(**options)
-        path = "/api/actions"
+        path = '/api/actions'
         payload = {
           action: [3, options[:user_id], options[:follow_id], options[:asset_id], options[:route_id],
-                   options[:minimum_fill]].join(",")
+                   options[:minimum_fill]].join(',')
         }
         @client.post(path, payload.to_json).body
       end
 
       def tradable_asset_ids
-        _pairs = pairs["data"]["pairs"]
+        _pairs = pairs['data']['pairs']
         _ids = []
         _pairs.each do |pair|
-          _ids.push(pair["base_asset_id"])
-          _ids.push(pair["quote_asset_id"])
+          _ids.push(pair['base_asset_id'])
+          _ids.push(pair['quote_asset_id'])
         end
         _ids.uniq!
       end

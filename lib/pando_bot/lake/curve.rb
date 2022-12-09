@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 # rubocop:disable Naming/MethodParameterName
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/MethodLength
 module PandoBot
   module Lake
+    # Curve protocal
     class Curve
       A_CONST = 200
       N_COINS = 2
@@ -109,3 +112,5 @@ module PandoBot
   end
 end
 # rubocop:enable Naming/MethodParameterName
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/MethodLength

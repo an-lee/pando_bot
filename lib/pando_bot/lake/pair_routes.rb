@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/ClassLength
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/PerceivedComplexity
 module PandoBot
   module Lake
+    # swap using paris
     class PairRoutes
       PRECISION = 8
-      HASH_SALT = "uniswap routes"
+      HASH_SALT = 'uniswap routes'
 
       attr_reader :pairs, :uniswap, :curve, :routes
 
@@ -21,12 +27,12 @@ module PandoBot
             fill_percent = 1 - pair[:fee_percent].to_f
 
             d = 0
-            d = @curve.d_const([base_amount * 1e9, quote_amount * 1e9]) if pair[:swap_method] == "curve"
+            d = @curve.d_const([base_amount * 1e9, quote_amount * 1e9]) if pair[:swap_method] == 'curve'
 
             pair.merge(
-              base_amount: base_amount,
-              quote_amount: quote_amount,
-              fill_percent: fill_percent,
+              base_amount:,
+              quote_amount:,
+              fill_percent:,
               K: (base_amount * quote_amount),
               D: d
             )
@@ -43,22 +49,22 @@ module PandoBot
         amount = output_amount.to_f.floor(PRECISION)
 
         if input_amount.present?
-          raise PandoBot::Lake::SwapError, "input amount invalid" if input_amount.negative?
+          raise PandoBot::Lake::SwapError, 'input amount invalid' if input_amount.negative?
 
           best = best_route input_asset, output_asset, input_amount
           amount = best[:amount]
         elsif output_amount.present?
-          raise PandoBot::Lake::SwapError, "output amount invalid" if output_amount.negative?
+          raise PandoBot::Lake::SwapError, 'output amount invalid' if output_amount.negative?
 
           best = best_route_reverse input_asset, output_asset, output_amount
           funds = best[:funds]
         else
-          raise PandoBot::Lake::SwapError, "input or output are needed"
+          raise PandoBot::Lake::SwapError, 'input or output are needed'
         end
 
-        raise PandoBot::Lake::SwapError, "no pair route found" if best.blank?
+        raise PandoBot::Lake::SwapError, 'no pair route found' if best.blank?
 
-        raise PandoBot::Lake::SwapError, "swap amount not support" if amount.blank? || funds.blank?
+        raise PandoBot::Lake::SwapError, 'swap amount not support' if amount.blank? || funds.blank?
 
         best
           .merge(
@@ -72,7 +78,7 @@ module PandoBot
               fill_asset_id: output_asset,
               pay_amount: format("%.#{PRECISION}f", funds),
               fill_amount: format("%.#{PRECISION}f", amount),
-              state: "Done"
+              state: 'Done'
             }
           )
       end
@@ -219,7 +225,7 @@ module PandoBot
 
         x, y = y, x if input_asset != pair[:base_asset_id]
 
-        if pair[:swap_method] == "curve"
+        if pair[:swap_method] == 'curve'
           dy = @curve.swap(x, y, dx)
           dy = dy.to_f.floor(PRECISION)
           price_impact = curve.price_impact(input_amount, dy)
@@ -234,7 +240,7 @@ module PandoBot
         {
           funds: input_amount.to_f.round(PRECISION),
           amount: dy,
-          price_impact: price_impact
+          price_impact:
         }
       end
 
@@ -251,7 +257,7 @@ module PandoBot
 
         return if dy > y
 
-        if pair[:swap_method] == "curve"
+        if pair[:swap_method] == 'curve'
           dx = @curve.swap_reverse(x, y, dy)
           dx = (dx / pair[:fill_percent]).to_f.ceil(PRECISION)
           price_impact = curve.price_impact(dx, output_amount)
@@ -267,9 +273,14 @@ module PandoBot
         {
           funds: dx,
           amount: output_amount,
-          price_impact: price_impact
+          price_impact:
         }
       end
     end
   end
 end
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/ClassLength
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/PerceivedComplexity
